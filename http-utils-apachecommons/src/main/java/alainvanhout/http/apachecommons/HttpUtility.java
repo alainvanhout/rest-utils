@@ -1,11 +1,11 @@
-package alainvanhout;
+package alainvanhout.http.apachecommons;
 
 import alainvanhout.http.dtos.Request;
 import alainvanhout.http.dtos.Response;
 
 public class HttpUtility {
 
-    public Response execute(final Request request){
+    public static Response execute(final Request request){
         return null;
     }
 }

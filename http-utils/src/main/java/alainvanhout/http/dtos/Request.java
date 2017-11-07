@@ -31,4 +31,9 @@ public class Request {
         this.body = body;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s", method, url);
+    }
 }
