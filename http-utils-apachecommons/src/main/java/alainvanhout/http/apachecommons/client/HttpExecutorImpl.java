@@ -5,8 +5,11 @@ import alainvanhout.http.client.HttpExecutor;
 import alainvanhout.http.client.HttpExecutorBuilder;
 import alainvanhout.http.dtos.Request;
 import alainvanhout.http.dtos.Response;
+import alainvanhout.http.parameters.Parameters;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
+import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -52,9 +55,24 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
         final StatusLine statusLine = apacheResponse.getStatusLine();
         final HttpEntity entity = apacheResponse.getEntity();
 
-        return new Response()
+        Response response = new Response()
                 .statusCode(statusLine.getStatusCode())
-                .body(bodyToString(entity));
+                .body(bodyToString(entity))
+                .headers(extractHeaders(apacheResponse));
+
+        extractHeaders(apacheResponse);
+
+        return response;
+    }
+
+    private Parameters extractHeaders(CloseableHttpResponse apacheResponse) {
+        Parameters headers = new Parameters();
+        for (Header header : apacheResponse.getAllHeaders()) {
+            for (HeaderElement headerElement : header.getElements()) {
+                headers.add(header.getName(), headerElement.getValue());
+            }
+        }
+        return headers;
     }
 
     private String bodyToString(HttpEntity entity) {

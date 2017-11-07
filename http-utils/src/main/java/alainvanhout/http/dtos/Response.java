@@ -1,6 +1,7 @@
 package alainvanhout.http.dtos;
 
 import alainvanhout.http.common.StatusCodeRange;
+import alainvanhout.http.parameters.Parameters;
 
 /**
  * Class that wraps the information of a http response
@@ -18,6 +19,8 @@ public class Response {
      * The duration of the http call
      */
     private long duration;
+
+    private Parameters headers = new Parameters();
 
     public int getStatusCode() {
         return statusCode;
@@ -49,8 +52,17 @@ public class Response {
         this.duration = duration;
     }
 
+    public Parameters getHeaders() {
+        return headers;
+    }
+
     @Override
     public String toString() {
         return String.format("%s [%s ms]", statusCode, duration);
+    }
+
+    public Response headers(Parameters headers) {
+        this.headers = headers;
+        return this;
     }
 }
