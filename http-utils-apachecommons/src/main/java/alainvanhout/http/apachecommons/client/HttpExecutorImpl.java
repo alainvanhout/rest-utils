@@ -1,15 +1,19 @@
 package alainvanhout.http.apachecommons.client;
 
 import alainvanhout.http.HttpException;
-import alainvanhout.http.client.HttpExecutorBuilder;
 import alainvanhout.http.client.HttpExecutor;
+import alainvanhout.http.client.HttpExecutorBuilder;
 import alainvanhout.http.dtos.Request;
 import alainvanhout.http.dtos.Response;
+import org.apache.commons.codec.Charsets;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 
 public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
@@ -41,8 +45,18 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
 
     private Response convertToResponse(CloseableHttpResponse apacheResponse) {
         final StatusLine statusLine = apacheResponse.getStatusLine();
+        final HttpEntity entity = apacheResponse.getEntity();
 
         return new Response()
-                .statusCode(statusLine.getStatusCode());
+                .statusCode(statusLine.getStatusCode())
+                .body(bodyToString(entity));
+    }
+
+    private String bodyToString(HttpEntity entity) {
+        try {
+            return IOUtils.toString(entity.getContent(), Charsets.UTF_8);
+        } catch (IOException | UnsupportedOperationException e) {
+            throw new HttpException("Failed to extract body from response", e);
+        }
     }
 }
