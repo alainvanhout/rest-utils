@@ -1,6 +1,6 @@
 package alainvanhout.http.dtos;
 
-/**
+import alainvanhout.http.common.StatusCodeRange; /**
  * Class that wraps the information of a http response
  */
 public class Response {
@@ -31,5 +31,9 @@ public class Response {
     @Override
     public String toString() {
         return String.format("%s", statusCode);
+    }
+
+    public boolean inRange(StatusCodeRange statusCodeRange) {
+        return statusCodeRange.matches(this.statusCode);
     }
 }
