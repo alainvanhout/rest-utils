@@ -34,9 +34,14 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
         apacheRequest.setURI(URI.create(request.getUrl()));
 
         try {
+            final long startTime = System.currentTimeMillis();
             final CloseableHttpResponse apacheResponse = apacheClient.execute(apacheRequest);
+            final long endTime = System.currentTimeMillis();
 
-            return convertToResponse(apacheResponse);
+            Response response = convertToResponse(apacheResponse);
+            response.setDuration(endTime - startTime);
+
+            return response;
 
         } catch (Exception e) {
             throw new HttpException("Encountered error while executing request: " + request, e);
