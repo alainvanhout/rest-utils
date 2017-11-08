@@ -38,4 +38,12 @@ public class Parameters {
     public Map<String, List<String>> getMap() {
         return Collections.unmodifiableMap(map);
     }
+
+    public int size() {
+        return map.size();
+    }
+
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
 }

@@ -6,8 +6,8 @@ public class Request {
     private String url;
     private String method;
     private String body;
-    private Parameters parameters;
-    private Parameters headers;
+    private Parameters parameters = new Parameters();
+    private Parameters headers = new Parameters();
 
     public String getUrl() {
         return url;

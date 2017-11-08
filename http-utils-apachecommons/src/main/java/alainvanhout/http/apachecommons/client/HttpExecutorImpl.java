@@ -6,6 +6,7 @@ import alainvanhout.http.client.HttpExecutorBuilder;
 import alainvanhout.http.dtos.Request;
 import alainvanhout.http.dtos.Response;
 import alainvanhout.http.parameters.Parameters;
+import alainvanhout.http.parameters.ParametersUtility;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -32,9 +33,10 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
     @Override
     public Response execute(final Request request) {
         final ApacheRequestBase apacheRequest = new ApacheRequestBase();
+        final String url = request.getUrl() + buildParameters(request.getParameters());
 
         apacheRequest.setMethod(request.getMethod());
-        apacheRequest.setURI(URI.create(request.getUrl()));
+        apacheRequest.setURI(URI.create(url));
 
         try {
             final long startTime = System.currentTimeMillis();
@@ -49,6 +51,13 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
         } catch (Exception e) {
             throw new HttpException("Encountered error while executing request: " + request, e);
         }
+    }
+
+    private String buildParameters(Parameters parameters) {
+        if (parameters.isEmpty()) {
+            return "";
+        }
+        return "?" + ParametersUtility.toQueryString(parameters);
     }
 
     private Response convertToResponse(CloseableHttpResponse apacheResponse) {
