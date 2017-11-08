@@ -34,4 +34,8 @@ public class Parameters {
         }
         return map.get(key).get(0);
     }
+
+    public Map<String, List<String>> getMap() {
+        return Collections.unmodifiableMap(map);
+    }
 }
