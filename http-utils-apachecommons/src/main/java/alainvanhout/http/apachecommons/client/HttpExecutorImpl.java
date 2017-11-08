@@ -19,6 +19,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
 
@@ -37,6 +40,7 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
 
         apacheRequest.setMethod(request.getMethod());
         apacheRequest.setURI(URI.create(url));
+        applyHeaders(apacheRequest, request);
 
         try {
             final long startTime = System.currentTimeMillis();
@@ -50,6 +54,14 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
 
         } catch (Exception e) {
             throw new HttpException("Encountered error while executing request: " + request, e);
+        }
+    }
+
+    private void applyHeaders(ApacheRequestBase apacheRequest, Request request) {
+        Map<String, List<String>> map = request.getHeaders().getMap();
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+            String value = entry.getValue().stream().collect(Collectors.joining(";"));
+            apacheRequest.addHeader(entry.getKey(), value);
         }
     }
 
