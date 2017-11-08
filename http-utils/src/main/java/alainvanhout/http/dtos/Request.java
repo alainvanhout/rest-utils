@@ -1,5 +1,6 @@
 package alainvanhout.http.dtos;
 
+import alainvanhout.http.common.HttpMethod;
 import alainvanhout.http.parameters.Parameters;
 
 public class Request {
@@ -28,6 +29,11 @@ public class Request {
 
     public Request method(final String method) {
         this.method = method;
+        return this;
+    }
+
+    public Request method(final HttpMethod method) {
+        this.method = method.name();
         return this;
     }
 
@@ -63,7 +69,6 @@ public class Request {
         this.headers.add(key, values);
         return this;
     }
-
 
     @Override
     public String toString() {
