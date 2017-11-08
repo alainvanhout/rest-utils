@@ -1,7 +1,9 @@
 package alainvanhout.http.dtos;
 
+import alainvanhout.http.common.Headers;
 import alainvanhout.http.common.HttpMethod;
 import alainvanhout.http.parameters.Parameters;
+import alainvanhout.http.utils.Base64Utility;
 
 public class Request {
     private String url;
@@ -68,6 +70,11 @@ public class Request {
     public Request addHeaders(final String key, final String... values) {
         this.headers.add(key, values);
         return this;
+    }
+
+    public Request basicAuthentication(String username, String password) {
+        final String authentication = Base64Utility.toBase64String(username + ":" + password);
+        return addHeaders(Headers.AUTHORIZATION, "Basic " + authentication);
     }
 
     @Override
