@@ -9,6 +9,7 @@ import alainvanhout.http.parameters.Parameters;
 import alainvanhout.http.parameters.ParametersUtility;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -36,7 +37,13 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
     @Override
     public Response execute(final Request request) {
         final ApacheRequestBase apacheRequest = new ApacheRequestBase();
-        final String url = request.getUrl() + buildParameters(request.getParameters());
+
+        final String[] split = StringUtils.split(request.getUrl(), "?");
+        final String minimalUrl = split[0];
+        final String queryString = split.length > 1 ? split[1] : "";
+
+        final Parameters urlParameters = buildFinalParameters(queryString, request.getParameters());
+        final String url = minimalUrl + buildParameters(urlParameters);
 
         apacheRequest.setMethod(request.getMethod());
         apacheRequest.setURI(URI.create(url));
@@ -55,6 +62,12 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
         } catch (Exception e) {
             throw new HttpException("Encountered error while executing request: " + request, e);
         }
+    }
+
+    private Parameters buildFinalParameters(String queryString, Parameters requestParameters) {
+        final Parameters urlParameters = ParametersUtility.fromQueryString(queryString);
+        urlParameters.add(requestParameters);
+        return urlParameters;
     }
 
     private void applyHeaders(ApacheRequestBase apacheRequest, Request request) {
