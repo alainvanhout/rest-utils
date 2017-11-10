@@ -76,21 +76,17 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
         final StatusLine statusLine = apacheResponse.getStatusLine();
         final HttpEntity entity = apacheResponse.getEntity();
 
-        Response response = new Response()
+        return new Response()
                 .statusCode(statusLine.getStatusCode())
                 .body(bodyToString(entity))
                 .headers(extractHeaders(apacheResponse));
-
-        extractHeaders(apacheResponse);
-
-        return response;
     }
 
     private Parameters extractHeaders(CloseableHttpResponse apacheResponse) {
         Parameters headers = new Parameters();
         for (Header header : apacheResponse.getAllHeaders()) {
             for (HeaderElement headerElement : header.getElements()) {
-                headers.add(header.getName(), headerElement.getValue());
+                headers.add(header.getName(), headerElement.getName());
             }
         }
         return headers;

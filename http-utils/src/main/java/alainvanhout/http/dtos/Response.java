@@ -52,17 +52,22 @@ public class Response {
         this.duration = duration;
     }
 
+
     public Parameters getHeaders() {
         return headers;
     }
 
+    public Response headers(final Parameters headers) {
+        this.headers = headers;
+        return this;
+    }
+
+    public Response addHeaders(final String key, final String... values) {
+        this.headers.add(key, values);
+        return this;
+    }
     @Override
     public String toString() {
         return String.format("%s [%s ms]", statusCode, duration);
-    }
-
-    public Response headers(Parameters headers) {
-        this.headers = headers;
-        return this;
     }
 }
