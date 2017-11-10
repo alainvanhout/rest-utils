@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Parameters {
 
-    private Map<String, List<String>> map = new HashMap<>();
+    private Map<String, List<String>> map = new LinkedHashMap<>();
 
     public Parameters add(final String key, final String... values) {
         if (!map.containsKey(key)) {
@@ -12,6 +12,15 @@ public class Parameters {
         }
         map.get(key).addAll(Arrays.asList(values));
         return this;
+    }
+
+    public Parameters add(final Map<String, List<String>> valueMap) {
+        this.map.putAll(valueMap);
+        return this;
+    }
+
+    public Parameters add(final Parameters parameters) {
+        return add(parameters.getMap());
     }
 
     public boolean contains(String key) {
