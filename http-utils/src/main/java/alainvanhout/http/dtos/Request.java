@@ -4,6 +4,7 @@ import alainvanhout.http.common.Headers;
 import alainvanhout.http.common.HttpMethod;
 import alainvanhout.http.parameters.Parameters;
 import alainvanhout.http.utils.Base64Utility;
+import alainvanhout.json.JsonConverter;
 
 public class Request {
     private String url;
@@ -11,6 +12,7 @@ public class Request {
     private String body;
     private Parameters parameters = new Parameters();
     private Parameters headers = new Parameters();
+    private JsonConverter jsonConverter;
 
     public String getUrl() {
         return url;
@@ -75,6 +77,15 @@ public class Request {
     public Request basicAuthentication(String username, String password) {
         final String authentication = Base64Utility.toBase64String(username + ":" + password);
         return addHeaders(Headers.AUTHORIZATION, "Basic " + authentication);
+    }
+
+    public JsonConverter getJsonConverter() {
+        return jsonConverter;
+    }
+
+    public Request jsonConverter(final JsonConverter jsonConverter) {
+        this.jsonConverter = jsonConverter;
+        return this;
     }
 
     @Override

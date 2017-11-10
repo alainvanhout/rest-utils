@@ -2,6 +2,10 @@ package alainvanhout.http.dtos;
 
 import alainvanhout.http.common.StatusCodeRange;
 import alainvanhout.http.parameters.Parameters;
+import alainvanhout.json.JsonConverter;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * Class that wraps the information of a http response
@@ -19,6 +23,8 @@ public class Response {
      * The duration of the http call
      */
     private long duration;
+
+    private JsonConverter jsonConverter;
 
     private Parameters headers = new Parameters();
 
@@ -39,6 +45,14 @@ public class Response {
         return body;
     }
 
+    public <T> T getBodyFromJson(Class<T> clazz) {
+        return jsonConverter.toObject(body, clazz);
+    }
+
+    public <T> List<T> getBodyFromJson(Type type) {
+        return jsonConverter.toList(body, type);
+    }
+
     public Response body(final String body) {
         this.body = body;
         return this;
@@ -51,7 +65,6 @@ public class Response {
     public void setDuration(long duration) {
         this.duration = duration;
     }
-
 
     public Parameters getHeaders() {
         return headers;
@@ -66,6 +79,16 @@ public class Response {
         this.headers.add(key, values);
         return this;
     }
+
+    public JsonConverter getJsonConverter() {
+        return jsonConverter;
+    }
+
+    public Response jsonConverter(final JsonConverter jsonConverter) {
+        this.jsonConverter = jsonConverter;
+        return this;
+    }
+
     @Override
     public String toString() {
         return String.format("%s [%s ms]", statusCode, duration);
