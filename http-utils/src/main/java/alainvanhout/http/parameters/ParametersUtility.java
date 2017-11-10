@@ -1,5 +1,7 @@
 package alainvanhout.http.parameters;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,5 +21,20 @@ public class ParametersUtility {
         return values.stream()
                 .map(value -> entry.getKey() + "=" + value)
                 .collect(Collectors.joining("&"));
+    }
+
+    public static Parameters fromQueryString(final String queryString) {
+        final Parameters parameters = new Parameters();
+
+        final String[] pairs = StringUtils.split(queryString, "&");
+        for (String pair : pairs) {
+            if (pair.contains("=")){
+                parameters.add(StringUtils.substringBefore(pair, "="), StringUtils.substringAfter(pair, "="));
+            } else {
+                parameters.add(pair);
+            }
+        }
+
+        return parameters;
     }
 }
