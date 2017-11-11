@@ -1,5 +1,6 @@
 package alainvanhout.http.apachecommons.client;
 
+import alainvanhout.http.HttpDefaults;
 import alainvanhout.http.HttpException;
 import alainvanhout.http.client.HttpExecutor;
 import alainvanhout.http.client.HttpExecutorBuilder;
@@ -7,6 +8,7 @@ import alainvanhout.http.dtos.Request;
 import alainvanhout.http.dtos.Response;
 import alainvanhout.http.parameters.Parameters;
 import alainvanhout.http.parameters.ParametersUtility;
+import alainvanhout.json.JsonConverter;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,11 +24,27 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
 
     private CloseableHttpClient apacheClient;
+
+    private JsonConverter jsonConverter = null;
+
+    private HttpExecutorImpl() {
+    }
+
+    public static HttpExecutorBuilder with() {
+        return new HttpExecutorImpl();
+    }
+
+    @Override
+    public HttpExecutorImpl jsonConverter(final JsonConverter jsonConverter) {
+        this.jsonConverter = jsonConverter;
+        return this;
+    }
 
     @Override
     public HttpExecutor init() {
@@ -57,10 +75,26 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
             Response response = convertToResponse(apacheResponse);
             response.setDuration(endTime - startTime);
 
+            assignJsonConverrterToResponse(request, response);
+
             return response;
 
         } catch (Exception e) {
             throw new HttpException("Encountered error while executing request: " + request, e);
+        }
+    }
+
+    private void assignJsonConverrterToResponse(Request request, Response response) {
+        final JsonConverter requestJsonConverter = request.getJsonConverter();
+        // there is an order of precedence for which json converter is assigned:
+        // request > http executor > global default
+        if (Objects.nonNull(requestJsonConverter)) {
+            response.jsonConverter(requestJsonConverter);
+        } else if (Objects.nonNull(this.jsonConverter)) {
+            response.jsonConverter(this.jsonConverter);
+        } else {
+            // note that the default may yet be null
+            response.jsonConverter(HttpDefaults.getDefaultJsonConverter());
         }
     }
 

@@ -7,7 +7,7 @@ import alainvanhout.http.dtos.Response;
 
 public class HttpUtility {
 
-    public static HttpExecutor DEFAULT = new HttpExecutorImpl().init();
+    public static HttpExecutor DEFAULT = HttpExecutorImpl.with().init();
 
     public static Response execute(final Request request){
         return DEFAULT.execute(request);
