@@ -1,10 +1,13 @@
 package alainvanhout.http.dtos;
 
+import alainvanhout.http.HttpDefaults;
 import alainvanhout.http.common.Headers;
 import alainvanhout.http.common.HttpMethod;
 import alainvanhout.http.parameters.Parameters;
 import alainvanhout.http.utils.Base64Utility;
 import alainvanhout.json.JsonConverter;
+
+import java.util.Objects;
 
 public class Request {
     private String url;
@@ -44,6 +47,22 @@ public class Request {
     public Request body(final String body) {
         this.body = body;
         return this;
+    }
+
+    public Request bodyAsJson(final Object body) {
+        final JsonConverter converter = actualJsonConverter();
+        return body(converter.toJson(body));
+    }
+
+    private JsonConverter actualJsonConverter(){
+        if (Objects.nonNull(jsonConverter)) {
+            return jsonConverter;
+        }
+        final JsonConverter defaultJsonConverter = HttpDefaults.getDefaultJsonConverter();
+        if (Objects.nonNull(defaultJsonConverter)) {
+            return defaultJsonConverter;
+        }
+        throw new IllegalStateException("No JsonConverter has been assigned");
     }
 
     public Parameters getParameters() {
