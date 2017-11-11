@@ -12,6 +12,13 @@ public class JsonConverterImpl implements JsonConverter, JsonConverterBuilder {
 
     private Gson gson = null;
 
+    private JsonConverterImpl(){
+    }
+
+    public static JsonConverterBuilder with(){
+        return new JsonConverterImpl();
+    }
+
     @Override
     public JsonConverter init() {
         gson = new GsonBuilder().create();
