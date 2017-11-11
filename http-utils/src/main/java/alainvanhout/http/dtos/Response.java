@@ -1,11 +1,13 @@
 package alainvanhout.http.dtos;
 
+import alainvanhout.http.HttpDefaults;
 import alainvanhout.http.common.StatusCodeRange;
 import alainvanhout.http.parameters.Parameters;
 import alainvanhout.json.JsonConverter;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class that wraps the information of a http response
@@ -50,7 +52,19 @@ public class Response {
     }
 
     public <T> List<T> getBodyFromJson(Type type) {
-        return jsonConverter.toList(body, type);
+        JsonConverter converter = actualJsonConverter();
+        return converter.toList(body, type);
+    }
+
+    private JsonConverter actualJsonConverter(){
+        if (Objects.nonNull(jsonConverter)) {
+            return jsonConverter;
+        }
+        final JsonConverter defaultJsonConverter = HttpDefaults.getDefaultJsonConverter();
+        if (Objects.nonNull(defaultJsonConverter)) {
+            return defaultJsonConverter;
+        }
+        throw new IllegalStateException("No JsonConverter has been assigned");
     }
 
     public Response body(final String body) {
@@ -93,4 +107,5 @@ public class Response {
     public String toString() {
         return String.format("%s [%s ms]", statusCode, duration);
     }
+
 }
