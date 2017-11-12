@@ -52,7 +52,7 @@ public class Response {
     }
 
     public <T> List<T> getBodyFromJson(Type type) {
-        JsonConverter converter = actualJsonConverter();
+        final JsonConverter converter = actualJsonConverter();
         return converter.toList(body, type);
     }
 
