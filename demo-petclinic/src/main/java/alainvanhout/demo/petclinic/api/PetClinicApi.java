@@ -5,18 +5,27 @@ import alainvanhout.endpoint.api.BasicApi;
 import alainvanhout.endpoint.api.Settings;
 import alainvanhout.http.HttpDefaults;
 import alainvanhout.http.apachecommons.HttpUtility;
+import alainvanhout.http.dtos.Response;
 import alainvanhout.json.gson.JsonUtility;
 
-public class PetClinicApi extends BasicApi {
+import java.util.function.Consumer;
 
-    public PetsEndpoint pets;
+public class PetClinicApi extends BasicApi<PetClinicApi> {
+
+    public PetsEndpoint pets = new PetsEndpoint().init("pets", this);
 
     public PetClinicApi(final String url) {
-        super(new Settings()
-                .httpExecutor(HttpUtility.DEFAULT));
-
+        super(url, new Settings().httpExecutor(HttpUtility.DEFAULT));
         HttpDefaults.setDefaultJsonConverter(JsonUtility.DEFAULT);
+    }
 
-        pets = new PetsEndpoint().init(url + "pets", settings);
+    @Override
+    protected Consumer<Response> defaultOnSuccess() {
+        return response -> {};
+    }
+
+    @Override
+    protected Consumer<Response> defaultOnError() {
+        return response -> {};
     }
 }

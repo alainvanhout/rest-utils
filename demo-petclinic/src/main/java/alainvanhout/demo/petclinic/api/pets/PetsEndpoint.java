@@ -18,6 +18,6 @@ public class PetsEndpoint extends Endpoint<PetsEndpoint, Pet, List<Pet>> {
     }
 
     public PetEndpoint id(final String id) {
-        return new PetEndpoint().init(url + "/" + id, settings);
+        return new PetEndpoint().init(id, this);
     }
 }

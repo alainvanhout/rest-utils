@@ -1,9 +1,12 @@
 package alainvanhout.endpoint.api;
 
+import alainvanhout.http.client.HttpExecutor;
 import alainvanhout.http.dtos.Request;
 import alainvanhout.http.dtos.Response;
 
 import java.lang.reflect.Type;
+
+import static alainvanhout.http.common.StatusCodeRange.*;
 
 /**
  *
@@ -11,19 +14,21 @@ import java.lang.reflect.Type;
  * @param <U> The instance type
  * @param <V> The list type
  */
-public class Endpoint<T extends Endpoint, U, V> {
-
-    protected String url;
-    protected Settings settings;
+public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T>  {
 
     private Class<U> instanceType;
     private Type listType;
 
-    public T init(final String url, final Settings settings){
-        this.url = url;
-        this.settings = settings;
+    public Endpoint() {
         this.instanceType = extractInstanceType();
         this.listType = extractListType();
+    }
+
+    public T init(final String url, CallHandler parent){
+        this.instanceType = extractInstanceType();
+        this.listType = extractListType();
+        this.url = url;
+        this.parent(parent);
         return (T)this;
     }
 
@@ -45,16 +50,32 @@ public class Endpoint<T extends Endpoint, U, V> {
 
     protected Request createRequest(){
         return new Request()
-                .url(url);
+                .url(getUrl());
     }
 
     protected U performInstanceCall(Request request) {
-        final Response response = settings.getHttpExecutor().execute(request);
-        return (U)response.getBodyFromJson(instanceType);
+        final HttpExecutor httpExecutor = getSettings().getHttpExecutor();
+        final Response response = httpExecutor.execute(request);
+        return handleResponse(response, instanceType);
     }
 
     protected V performListCall(Request request) {
-        final Response response = settings.getHttpExecutor().execute(request);
-        return (V)response.getBodyFromJson(listType);
+        final HttpExecutor httpExecutor = getSettings().getHttpExecutor();
+        final Response response = httpExecutor.execute(request);
+        return handleResponse(response, listType);
+    }
+
+    private <R> R handleResponse(Response response, Object type) {
+        if (response.inRange(_200)) {
+            this.getOnSuccess().accept(response);
+        } else {
+            this.getOnError().accept(response);
+        }
+
+        if (type instanceof Class) {
+            return (R)response.getBodyFromJson((Class)type);
+        } else {
+            return (R)response.getBodyFromJson((Type)type);
+        }
     }
 }

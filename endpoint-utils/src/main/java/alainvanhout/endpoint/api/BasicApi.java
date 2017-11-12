@@ -1,10 +1,23 @@
 package alainvanhout.endpoint.api;
 
-public class BasicApi {
+import alainvanhout.http.dtos.Response;
 
-    protected final Settings settings;
+import java.util.function.Consumer;
 
-    public BasicApi(Settings settings) {
-        this.settings = settings;
+public abstract class BasicApi<T extends CallHandler> extends CallHandler<T> {
+
+    public BasicApi(String url, Settings settings) {
+        this.url = url;
+        this.setSetting(settings);
+        this.setOnSuccess(defaultOnSuccess());
+        this.setOnError(defaultOnError());
+    }
+
+    protected Consumer<Response> defaultOnSuccess() {
+        return response -> {};
+    }
+
+    protected Consumer<Response> defaultOnError(){
+        return response -> {};
     }
 }
