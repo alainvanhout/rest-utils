@@ -2,10 +2,7 @@ package alainvanhout.http.parameters;
 
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.List;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ParametersUtilityTest {
 
@@ -39,10 +36,7 @@ public class ParametersUtilityTest {
         expected.add("key5", "valueDupl", "valueDupl");
         expected.add("key6", "value6");
 
-        // we do not care about the specific order, only the contents
-        final HashMap<String, List<String>> unsortedExpected = new HashMap<>(expected.getMap());
-        final HashMap<String, List<String>> unsortedResult = new HashMap<>(result.getMap());
-        assertEquals(unsortedExpected, unsortedResult);
+        assertEquals(expected, result);
     }
 
     @Test
@@ -50,5 +44,4 @@ public class ParametersUtilityTest {
         final Parameters parameters = ParametersUtility.fromQueryString("");
         assertEquals(0, parameters.size());
     }
-
 }

@@ -25,10 +25,14 @@ public class Response {
      * The duration of the http call
      */
     private long duration;
-
-    private JsonConverter jsonConverter;
-
+    /**
+     * Wrapper for the http header information to be used.
+     */
     private Parameters headers = new Parameters();
+    /**
+     * The {@link JsonConverter} to be used. It needs not be set if no JSON-related functionality is used.
+     */
+    private JsonConverter jsonConverter;
 
     public int getStatusCode() {
         return statusCode;
@@ -39,6 +43,12 @@ public class Response {
         return this;
     }
 
+    /**
+     * Convenience method for checking whether the response's http status code is within the given range.
+     *
+     * @param statusCodeRange The range to be checked against
+     * @return Whether it is in the given range
+     */
     public boolean inRange(StatusCodeRange statusCodeRange) {
         return statusCodeRange.matches(this.statusCode);
     }
@@ -47,16 +57,32 @@ public class Response {
         return body;
     }
 
+    /**
+     * A convenience method to retrieve the information in the JSON-based response body, based on a {@link Class}
+     * reference. This requires that a {@link JsonConverter} has been assigned to this request.
+     *
+     * @param clazz The class of object that is to be produced
+     * @param <T>   The generic associated with the class of the object that is to be produced
+     * @return The object that is to be produced
+     */
     public <T> T getBodyFromJson(Class<T> clazz) {
         return jsonConverter.toObject(body, clazz);
     }
 
+    /**
+     * A convenience method to retrieve the information in the JSON-based response body, based on a {@link Type}
+     * reference. This requires that a {@link JsonConverter} has been assigned to this request.
+     *
+     * @param type The Generic {@link Type} of the list that is to be produced
+     * @param <T>  The generic associated with the type of the list that is to be produced
+     * @return The list that is to be produced
+     */
     public <T> List<T> getBodyFromJson(Type type) {
         final JsonConverter converter = actualJsonConverter();
         return converter.toList(body, type);
     }
 
-    private JsonConverter actualJsonConverter(){
+    private JsonConverter actualJsonConverter() {
         if (Objects.nonNull(jsonConverter)) {
             return jsonConverter;
         }
@@ -89,6 +115,13 @@ public class Response {
         return this;
     }
 
+    /**
+     * Convenience method to add an http header, with one or more values.
+     *
+     * @param key    The query parameter key
+     * @param values The query parameter values (may be zero, one or more)
+     * @return The request itself
+     */
     public Response addHeaders(final String key, final String... values) {
         this.headers.add(key, values);
         return this;
@@ -103,6 +136,12 @@ public class Response {
         return this;
     }
 
+    /**
+     * Returns a string of the form '201 (36 ms)' in the case of an http call that returned with a 201 status code
+     * within 36 milliseconds, for e.g. convenient logging.
+     *
+     * @return A string representation of the response
+     */
     @Override
     public String toString() {
         return String.format("%s [%s ms]", statusCode, duration);

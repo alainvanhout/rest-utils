@@ -9,12 +9,37 @@ import alainvanhout.json.JsonConverter;
 
 import java.util.Objects;
 
+import static alainvanhout.http.common.Headers.CONTENT_TYPE;
+import static alainvanhout.http.common.MimeTypes.APPLICATION_JSON;
+
+/**
+ * A dto that wraps all information necessary to perform an http request. The information is all openly modifiable and
+ * can easily be retrieved. Convenience methods are provided, but behaviour is purposely kept to a minimum.
+ */
 public class Request {
+    /**
+     * The Uniform Resource Locator (URL) that is to be used.
+     */
     private String url;
+    /**
+     * The http method (also referred to as verb) to be used.
+     */
     private String method;
+    /**
+     * The request body to be used. May be left blank.
+     */
     private String body;
+    /**
+     * Wrapper for the query parameter information to be used.
+     */
     private Parameters parameters = new Parameters();
+    /**
+     * Wrapper for the http header information to be used.
+     */
     private Parameters headers = new Parameters();
+    /**
+     * The {@link JsonConverter} to be used. It needs not be set if no JSON-related functionality is used.
+     */
     private JsonConverter jsonConverter;
 
     public String getUrl() {
@@ -49,12 +74,19 @@ public class Request {
         return this;
     }
 
+    /**
+     * Convenience method to set the body to a JSON-representation of a given object
+     *
+     * @param body The object to be converted to JSON
+     * @return The request itself
+     */
     public Request bodyAsJson(final Object body) {
         final JsonConverter converter = actualJsonConverter();
+        headers.add(CONTENT_TYPE, APPLICATION_JSON);
         return body(converter.toJson(body));
     }
 
-    private JsonConverter actualJsonConverter(){
+    private JsonConverter actualJsonConverter() {
         if (Objects.nonNull(jsonConverter)) {
             return jsonConverter;
         }
@@ -74,6 +106,13 @@ public class Request {
         return this;
     }
 
+    /**
+     * Convenience method to add a query parameter, with one or more values.
+     *
+     * @param key    The query parameter key
+     * @param values The query parameter values (may be zero, one or more)
+     * @return The request itself
+     */
     public Request addParameters(final String key, final String... values) {
         this.parameters.add(key, values);
         return this;
@@ -88,11 +127,25 @@ public class Request {
         return this;
     }
 
+    /**
+     * Convenience method to add an http header, with one or more values.
+     *
+     * @param key    The query parameter key
+     * @param values The query parameter values (may be zero, one or more)
+     * @return The request itself
+     */
     public Request addHeaders(final String key, final String... values) {
         this.headers.add(key, values);
         return this;
     }
 
+    /**
+     * A convenience method to add a basic authentication header to the request.
+     *
+     * @param username The username
+     * @param password The password
+     * @return The request itself
+     */
     public Request basicAuthentication(String username, String password) {
         final String authentication = Base64Utility.toBase64String(username + ":" + password);
         return addHeaders(Headers.AUTHORIZATION, "Basic " + authentication);
@@ -107,6 +160,11 @@ public class Request {
         return this;
     }
 
+    /**
+     * Returns a string of the form 'GET http://example.com', for e.g. convenient logging.
+     *
+     * @return A string representation of the request
+     */
     @Override
     public String toString() {
         return String.format("%s %s", method, url);
