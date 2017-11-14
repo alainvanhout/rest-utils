@@ -10,12 +10,25 @@ import alainvanhout.json.gson.JsonUtility;
 
 import java.util.function.Consumer;
 
+/**
+ * An example implementation of an API client, building endpoint-utils module.
+ */
 public class PetClinicApi extends BasicApi<PetClinicApi> {
 
+    /**
+     * To avoid each and every {@link alainvanhout.endpoint.api.Endpoint} implementation requiring an identical
+     * constructor, the {@link alainvanhout.endpoint.api.Endpoint::init} serves the same purpose.
+     */
     public PetsEndpoint pets = new PetsEndpoint().init("pets", this);
 
-    public PetClinicApi(final String url) {
-        super(url, new Settings().httpExecutor(HttpUtility.DEFAULT));
+    /**
+     * An API client requires a root URL.
+     *
+     * @param rootUrl The root URL, to be passed on to {@link BasicApi}
+     */
+    public PetClinicApi(final String rootUrl) {
+        super(rootUrl, new Settings().httpExecutor(HttpUtility.DEFAULT));
+        // this ensures that a default JsonConverter is known globally, so it need not be set on every Request or Response
         HttpDefaults.setDefaultJsonConverter(JsonUtility.DEFAULT);
     }
 

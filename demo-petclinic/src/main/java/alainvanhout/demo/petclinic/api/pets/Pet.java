@@ -1,5 +1,8 @@
 package alainvanhout.demo.petclinic.api.pets;
 
+/**
+ * A dto for the Pet resource.
+ */
 public class Pet {
     private String id;
     private String name;
