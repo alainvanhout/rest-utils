@@ -5,6 +5,11 @@ import alainvanhout.http.dtos.Response;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * A superclass that wraps that encapsulates information and behaviour relates to setting and http call response handling.
+ *
+ * @param <T> A reference to the concrete class itself, to allow for chaining method call
+ */
 public class CallHandler<T extends CallHandler> {
 
     protected String url;
@@ -46,7 +51,7 @@ public class CallHandler<T extends CallHandler> {
         if (Objects.nonNull(settings)) {
             return settings;
         }
-        if (Objects.nonNull(parent)){
+        if (Objects.nonNull(parent)) {
             return parent.getSettings();
         }
         return null;
@@ -56,7 +61,7 @@ public class CallHandler<T extends CallHandler> {
         if (Objects.nonNull(onError)) {
             return onError;
         }
-        if (Objects.nonNull(parent)){
+        if (Objects.nonNull(parent)) {
             return parent.getOnError();
         }
         return null;
@@ -66,7 +71,7 @@ public class CallHandler<T extends CallHandler> {
         if (Objects.nonNull(onSuccess)) {
             return onSuccess;
         }
-        if (Objects.nonNull(parent)){
+        if (Objects.nonNull(parent)) {
             return parent.getOnSuccess();
         }
         return null;
