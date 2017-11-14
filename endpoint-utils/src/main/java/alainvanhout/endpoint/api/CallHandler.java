@@ -24,6 +24,12 @@ public class CallHandler<T extends CallHandler> {
         return (T) createChildInstance().setOnError(consumer);
     }
 
+    public T onErrorThrow() {
+        return onError(response -> {
+            throw new EndpointException(String.format("Encountered error response: %s", response));
+        });
+    }
+
     public T onSuccess(Consumer<Response> consumer) {
         return (T) createChildInstance().setOnSuccess(consumer);
     }
