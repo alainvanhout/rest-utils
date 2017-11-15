@@ -25,6 +25,15 @@ public interface JsonConverter {
     <T> T toObject(final String json, final Class<T> clazz);
 
     /**
+     * Produces an object based on the provided JSON string and a {@link Type} reference.
+     * @param json The JSON string
+     * @param type The type of object that is to be produced
+     * @param <T> The generic associated with the type of the object that is to be produced
+     * @return The object that is to be produced
+     */
+    <T> T toObject(final String json, final Type type);
+
+    /**
      * Produces a list based on the provided JSON string and a {@link Type} reference.
      * @param json The JSON string
      * @param type The Generic {@link Type} of the list that is to be produced

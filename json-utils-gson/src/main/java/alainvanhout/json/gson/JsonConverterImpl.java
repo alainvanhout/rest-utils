@@ -62,6 +62,11 @@ public class JsonConverterImpl implements JsonConverter, JsonConverterBuilder {
     }
 
     @Override
+    public <T> T toObject(final String json, final Type type) {
+        return gson.fromJson(json, type);
+    }
+
+    @Override
     public <T> List<T> toList(final String json, final Type type) {
         return gson.fromJson(json, type);
     }
