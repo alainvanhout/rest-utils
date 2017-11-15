@@ -59,11 +59,11 @@ public class CallHandler<T extends CallHandler> {
     }
 
     T setOnSuccess(final Consumer<Response> consumer) {
-        this.onSuccess = (response, o) -> consumer.accept(response);;
+        this.onSuccess = (response, o) -> consumer.accept(response);
         return (T) this;
     }
 
-    private T createChildInstance() {
+    protected T createChildInstance() {
         try {
             return (T) this.getClass().newInstance()
                     .parent(this);

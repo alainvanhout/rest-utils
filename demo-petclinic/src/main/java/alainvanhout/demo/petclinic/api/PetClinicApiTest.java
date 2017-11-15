@@ -5,5 +5,15 @@ package alainvanhout.demo.petclinic.api;
  */
 public class PetClinicApiTest  {
 
-    protected PetClinicApi api = new PetClinicApi("http://localhost:9966/petclinic/api");
+    public static final String ROOT_URL = "http://localhost:9966/petclinic/api";
+
+    /**
+     * A convenience API client
+     */
+    protected PetClinicApi api = new PetClinicApi(ROOT_URL);
+
+    /**
+     * A convenience API client facade
+     */
+    protected PetClinicApiFacade facade = new PetClinicApiFacade(ROOT_URL);
 }
