@@ -3,6 +3,7 @@ package alainvanhout.endpoint.api;
 import alainvanhout.http.dtos.Response;
 
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -17,10 +18,14 @@ public class CallHandler<T extends CallHandler> {
 
     private CallHandler parent;
 
-    private Consumer<Response> onError;
-    private Consumer<Response> onSuccess;
+    private BiConsumer<Response, Object> onError;
+    private BiConsumer<Response, Object> onSuccess;
 
-    public T onError(Consumer<Response> consumer) {
+    public <U> T onError(final BiConsumer<Response, U> consumer) {
+        return (T) createChildInstance().setOnError(consumer);
+    }
+
+    public T onError(final Consumer<Response> consumer) {
         return (T) createChildInstance().setOnError(consumer);
     }
 
@@ -30,17 +35,31 @@ public class CallHandler<T extends CallHandler> {
         });
     }
 
-    public T onSuccess(Consumer<Response> consumer) {
+    public T onSuccess(final Consumer<Response> consumer) {
         return (T) createChildInstance().setOnSuccess(consumer);
     }
 
-    T setOnError(Consumer<Response> consumer) {
+    public <U> T onSuccess(final BiConsumer<Response, U> consumer) {
+        return (T) createChildInstance().setOnSuccess(consumer);
+    }
+
+    T setOnError(final BiConsumer<Response, Object> consumer) {
         this.onError = consumer;
         return (T) this;
     }
 
-    T setOnSuccess(Consumer<Response> consumer) {
+    T setOnError(final Consumer<Response> consumer) {
+        this.onError = (response, o) -> consumer.accept(response);
+        return (T) this;
+    }
+
+    T setOnSuccess(final BiConsumer<Response, Object> consumer) {
         this.onSuccess = consumer;
+        return (T) this;
+    }
+
+    T setOnSuccess(final Consumer<Response> consumer) {
+        this.onSuccess = (response, o) -> consumer.accept(response);;
         return (T) this;
     }
 
@@ -63,7 +82,7 @@ public class CallHandler<T extends CallHandler> {
         return null;
     }
 
-    Consumer<Response> getOnError() {
+    BiConsumer<Response, Object> getOnError() {
         if (Objects.nonNull(onError)) {
             return onError;
         }
@@ -73,7 +92,7 @@ public class CallHandler<T extends CallHandler> {
         return null;
     }
 
-    Consumer<Response> getOnSuccess() {
+    BiConsumer<Response, Object> getOnSuccess() {
         if (Objects.nonNull(onSuccess)) {
             return onSuccess;
         }

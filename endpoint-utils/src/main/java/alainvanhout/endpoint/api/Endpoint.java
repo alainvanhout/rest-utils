@@ -5,6 +5,7 @@ import alainvanhout.http.dtos.Request;
 import alainvanhout.http.dtos.Response;
 
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 import static alainvanhout.http.common.StatusCodeRange._200;
 
@@ -40,6 +41,12 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
      * {@link Endpoint} implementations.
      */
     private Type listType;
+    /**
+     * A concrete reference to the {@link Class} or {@link Type} that serves as the error dto for this endpoint.
+     * It is extracted from the field of the same name that by convention is added to the
+     * {@link Endpoint} implementations.
+     */
+    private Type errorType;
 
     /**
      * Creating an instance of an {@link Endpoint} class will automatically cause extraction of the instanceType
@@ -48,9 +55,10 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
     public Endpoint() {
         this.instanceType = extractInstanceType();
         this.listType = extractListType();
+        this.errorType = extractErrorType();
     }
 
-    public T init(final String url, CallHandler parent) {
+    public T init(final String url, final CallHandler parent) {
         this.instanceType = extractInstanceType();
         this.listType = extractListType();
         this.url = url;
@@ -62,7 +70,8 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
         try {
             return (Class<U>) this.getClass().getDeclaredField("instanceType").getType();
         } catch (NoSuchFieldException e) {
-            throw new EndpointException("No field 'listType' found on class" + getClass().getCanonicalName());
+            // disregard, since the instanceType might not be needed
+            return null;
         }
     }
 
@@ -70,7 +79,17 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
         try {
             return this.getClass().getDeclaredField("listType").getGenericType();
         } catch (NoSuchFieldException e) {
-            throw new EndpointException("No field 'listType' found on class" + getClass().getCanonicalName());
+            // disregard, since the errorType might not be needed
+            return null;
+        }
+    }
+
+    private Type extractErrorType() {
+        try {
+            return this.getClass().getDeclaredField("errorType").getGenericType();
+        } catch (NoSuchFieldException e) {
+            // disregard, since the listType might not be needed, or is to be retrieved from the parent
+            return null;
         }
     }
 
@@ -84,29 +103,71 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
                 .url(getUrl());
     }
 
-    protected U performInstanceCall(Request request) {
+    protected U performInstanceCall(final Request request) {
+        if (Objects.isNull(instanceType)) {
+            throw new EndpointException("No field 'instanceType' found on class " + getClass().getCanonicalName());
+        }
+
         final HttpExecutor httpExecutor = getSettings().getHttpExecutor();
         final Response response = httpExecutor.execute(request);
         return handleResponse(response, instanceType);
     }
 
-    protected V performListCall(Request request) {
+    protected V performListCall(final Request request) {
+        if (Objects.isNull(listType)) {
+            throw new EndpointException("No field 'listType' found on class " + getClass().getCanonicalName());
+        }
+
         final HttpExecutor httpExecutor = getSettings().getHttpExecutor();
         final Response response = httpExecutor.execute(request);
         return handleResponse(response, listType);
     }
 
-    private <R> R handleResponse(Response response, Object type) {
+    protected void performVoidCall(final Request request) {
+        if (Objects.isNull(instanceType)) {
+            throw new EndpointException("No field 'listType' found on class " + getClass().getCanonicalName());
+        }
+
+        final HttpExecutor httpExecutor = getSettings().getHttpExecutor();
+        final Response response = httpExecutor.execute(request);
+        handleResponse(response, Void.class);
+    }
+
+    private <R> R handleResponse(final Response response, final Object type) {
+        final R result = deserializeResult(response, type);
+
         if (response.inRange(_200)) {
-            this.getOnSuccess().accept(response);
+            this.getOnSuccess().accept(response, result);
         } else {
-            this.getOnError().accept(response);
+            final Object error = deserializeError(response);
+            this.getOnError().accept(response, error);
+        }
+
+        return result;
+    }
+
+    private <R> R deserializeResult(final Response response, final Object type) {
+        if (Void.class.equals(type)) {
+            return null;
         }
 
         if (type instanceof Class) {
             return (R) response.getBodyFromJson((Class) type);
         } else {
             return (R) response.getBodyFromJson((Type) type);
+        }
+    }
+
+    private Object deserializeError(final Response response) {
+        if (Objects.isNull(errorType)) {
+            throw new EndpointException("No field 'errorType' found on class " + getClass().getCanonicalName());
+        }
+
+        try {
+            final String body = response.getBody();
+            return response.getJsonConverter().toObject(body, errorType);
+        } catch (Exception e) {
+            throw new EndpointException("Failed to deserialize error response body", e);
         }
     }
 }

@@ -55,8 +55,8 @@ public class BasicTest extends PetClinicApiTest {
     @Test
     public void getPets_whenIdNotAnInteger_shouldReturnValidationError() {
         api.pets.id("non_int_id")
-                .onError(response -> {
-                    final Map<String, String> error = response.getBodyFromJson(HashMap.class);
+                // handle the error as a dto (in this case, as a Map)
+                .<Map>onError((response, error) -> {
                     assertEquals(400, response.getStatusCode());
                     assertEquals(INT_MISMATCH_EXCEPTION, error.get("className"));
                     assertEquals(INT_MISMATCH_MESSAGE, error.get("exMessage"));
