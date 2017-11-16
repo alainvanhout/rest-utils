@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 public class ParametersUtilityTest {
 
     @Test
-    public void toQueryString_forComplexCase() throws Exception {
+    public void toQueryString_forComplexCase() {
         Parameters parameters = new Parameters();
         parameters.add("key1", "value1", "value2", "value3");
         parameters.add("key2", "value4");
@@ -19,13 +19,13 @@ public class ParametersUtilityTest {
     }
 
     @Test
-    public void toQueryString_forEmptyParametersObject() throws Exception {
+    public void toQueryString_forEmptyParametersObject() {
         Parameters parameters = new Parameters();
         assertEquals("", ParametersUtility.toQueryString(parameters));
     }
 
     @Test
-    public void fromQueryStringForComplexCase() throws Exception {
+    public void fromQueryStringForComplexCase() {
         final Parameters result = ParametersUtility.fromQueryString("key1=value1&key1=value2&key1=value3&key2=value4&key3&key4=&key5=valueDupl&key5=valueDupl&key6=value6");
 
         final Parameters expected = new Parameters();
@@ -40,7 +40,7 @@ public class ParametersUtilityTest {
     }
 
     @Test
-    public void fromQueryString_forEmptyString() throws Exception {
+    public void fromQueryString_forEmptyString() {
         final Parameters parameters = ParametersUtility.fromQueryString("");
         assertEquals(0, parameters.size());
     }

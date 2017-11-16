@@ -10,10 +10,10 @@ public class PetClinicApiTest  {
     /**
      * A convenience API client
      */
-    protected PetClinicApi api = new PetClinicApi(ROOT_URL);
+    protected final PetClinicApi api = new PetClinicApi(ROOT_URL);
 
     /**
      * A convenience API client facade
      */
-    protected PetClinicApiFacade facade = new PetClinicApiFacade(ROOT_URL);
+    protected final PetClinicApiFacade facade = new PetClinicApiFacade(ROOT_URL);
 }

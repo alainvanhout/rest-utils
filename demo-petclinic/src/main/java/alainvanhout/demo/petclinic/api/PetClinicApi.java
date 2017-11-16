@@ -20,7 +20,7 @@ public class PetClinicApi extends BasicApi<PetClinicApi> {
      * To avoid each and every {@link alainvanhout.endpoint.api.Endpoint} implementation requiring an identical
      * constructor, the {@link alainvanhout.endpoint.api.Endpoint#init(String, CallHandler)} serves the same purpose.
      */
-    public PetsEndpoint pets = new PetsEndpoint().init("pets", this);
+    public final PetsEndpoint pets = new PetsEndpoint().init("pets", this);
 
     /**
      * An API client requires a root URL.

@@ -13,7 +13,7 @@ public class HttpUtility {
     /**
      * A {@link HttpExecutor} instance that relies for all configuration relies on the defaults.
      */
-    public static HttpExecutor DEFAULT = HttpExecutorImpl.with().init();
+    public static final HttpExecutor DEFAULT = HttpExecutorImpl.with().init();
 
     public static Response execute(final Request request) {
         return DEFAULT.execute(request);

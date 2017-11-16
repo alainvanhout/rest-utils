@@ -14,7 +14,7 @@ public class Parameters {
     /**
      * The internal state.
      */
-    private Map<String, List<String>> map = new LinkedHashMap<>();
+    private final Map<String, List<String>> map = new LinkedHashMap<>();
 
     /**
      * Convenience method to add a parameter key, with one or more values as varargs.
@@ -129,12 +129,6 @@ public class Parameters {
      */
     @Override
     public boolean equals(Object o) {
-        if (Objects.isNull(o) && Objects.isNull(map)) {
-            return true;
-        }
-        if (Objects.isNull(o) || Objects.isNull(map)) {
-            return false;
-        }
         if (!(o instanceof Parameters)) {
             return false;
         }
@@ -151,6 +145,6 @@ public class Parameters {
      */
     @Override
     public int hashCode() {
-        return map != null ? new HashMap<>(map).hashCode() : 0;
+        return new HashMap<>(map).hashCode();
     }
 }

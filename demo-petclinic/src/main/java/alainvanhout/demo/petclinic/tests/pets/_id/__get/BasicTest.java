@@ -2,17 +2,12 @@ package alainvanhout.demo.petclinic.tests.pets._id.__get;
 
 import alainvanhout.demo.petclinic.api.PetClinicApiTest;
 import alainvanhout.demo.petclinic.api.pets.Pet;
-import alainvanhout.endpoint.utils.ResponseAssertionUtility;
-import alainvanhout.http.dtos.Response;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import static alainvanhout.endpoint.utils.ResponseAssertionUtility.*;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /**
  * A test of the GET /pets/{id} call that makes use of the PetClinicApi to reduce boilerplate.

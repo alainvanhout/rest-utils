@@ -75,7 +75,7 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
             Response response = convertToResponse(apacheResponse);
             response.setDuration(endTime - startTime);
 
-            assignJsonConverrterToResponse(request, response);
+            assignJsonConverterToResponse(request, response);
 
             return response;
 
@@ -84,7 +84,7 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
         }
     }
 
-    private void assignJsonConverrterToResponse(Request request, Response response) {
+    private void assignJsonConverterToResponse(Request request, Response response) {
         final JsonConverter requestJsonConverter = request.getJsonConverter();
         // there is an order of precedence for which json converter is assigned:
         // request > http executor > global default

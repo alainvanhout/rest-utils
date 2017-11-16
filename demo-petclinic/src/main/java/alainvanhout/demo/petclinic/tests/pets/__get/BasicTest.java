@@ -14,7 +14,7 @@ public class BasicTest extends PetClinicApiTest {
      * A simple test method that calls GET /pets and verifies that no non-200-status code was returned
      * and that the exact status code that was returned is 200.
      *
-     * Note that onError/onErrorThrow and onSuccess are handled separately to allow for greater flexibilty
+     * Note that onError/onErrorThrow and onSuccess are handled separately to allow for greater flexibility
      * and configurability.
      */
     @Test

@@ -15,68 +15,68 @@ import static org.junit.Assert.assertTrue;
 public class ParametersTest {
 
     @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+    public final ExpectedException expectedException = ExpectedException.none();
 
     private Parameters parameters;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         parameters = new Parameters();
     }
 
     // contains
 
     @Test
-    public void contains_ifOneValue() throws Exception {
+    public void contains_ifOneValue()  {
         parameters.add("key", "value");
         assertTrue(parameters.contains("key"));
     }
 
     @Test
-    public void contains_ifMultipleValues() throws Exception {
+    public void contains_ifMultipleValues() {
         parameters.add("key", "value1", "value2", "value3");
         assertTrue(parameters.contains("key"));
     }
 
     @Test
-    public void contains_ifKeyButNoValue() throws Exception {
+    public void contains_ifKeyButNoValue() {
         parameters.add("key");
         assertTrue(parameters.contains("key"));
     }
 
     @Test
-    public void contains_ifNoKey() throws Exception {
+    public void contains_ifNoKey() {
         assertFalse(parameters.contains("key"));
     }
 
     // get
 
     @Test
-    public void get_ifOneValue() throws Exception {
+    public void get_ifOneValue() {
         parameters.add("key", "value");
-        assertEquals(Arrays.asList("value"), parameters.get("key"));
+        assertEquals(Collections.singletonList("value"), parameters.get("key"));
     }
 
     @Test
-    public void get_ifMultipleValues() throws Exception {
+    public void get_ifMultipleValues() {
         parameters.add("key", "value1", "value2", "value3");
         assertEquals(Arrays.asList("value1", "value2", "value3"), parameters.get("key"));
     }
 
     @Test
-    public void get_ifDuplicateValues() throws Exception {
+    public void get_ifDuplicateValues() {
         parameters.add("key", "value1", "value2", "value1");
         assertEquals(Arrays.asList("value1", "value2", "value1"), parameters.get("key"));
     }
 
     @Test
-    public void get_ifKeyButNoValue() throws Exception {
+    public void get_ifKeyButNoValue() {
         parameters.add("key");
         assertEquals(Collections.emptyList(), parameters.get("key"));
     }
 
     @Test
-    public void get_ifNoKey() throws Exception {
+    public void get_ifNoKey() {
 
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("Key not found: key");
@@ -87,25 +87,25 @@ public class ParametersTest {
     // getOne
 
     @Test
-    public void getOne_ifOneValue() throws Exception {
+    public void getOne_ifOneValue() {
         parameters.add("key", "value");
         assertEquals("value", parameters.getOne("key"));
     }
 
     @Test
-    public void getOne_ifMultipleValues() throws Exception {
+    public void getOne_ifMultipleValues() {
         parameters.add("key", "value1", "value2", "value3");
         assertEquals("value1", parameters.getOne("key"));
     }
 
     @Test
-    public void getOne_ifDuplicateValues() throws Exception {
+    public void getOne_ifDuplicateValues() {
         parameters.add("key", "value1", "value2", "value1");
         assertEquals("value1", parameters.getOne("key"));
     }
 
     @Test
-    public void getOne_ifKeyButNoValue() throws Exception {
+    public void getOne_ifKeyButNoValue() {
         parameters.add("key");
 
         expectedException.expect(IllegalArgumentException.class);
@@ -115,7 +115,7 @@ public class ParametersTest {
     }
 
     @Test
-    public void getOne_ifNoKey() throws Exception {
+    public void getOne_ifNoKey() {
 
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("Key not found: key");

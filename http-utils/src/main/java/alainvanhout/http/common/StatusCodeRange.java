@@ -1,7 +1,7 @@
 package alainvanhout.http.common;
 
 /**
- * Provides a convenient way to check whether a given htpp response status code is in a given range.
+ * Provides a convenient way to check whether a given http response status code is in a given range.
  */
 public enum StatusCodeRange {
     _100(100, 199),

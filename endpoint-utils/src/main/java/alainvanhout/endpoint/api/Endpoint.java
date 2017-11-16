@@ -46,7 +46,7 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
      * It is extracted from the field of the same name that by convention is added to the
      * {@link Endpoint} implementations.
      */
-    private Type errorType;
+    private final Type errorType;
 
     /**
      * Creating an instance of an {@link Endpoint} class will automatically cause extraction of the instanceType
