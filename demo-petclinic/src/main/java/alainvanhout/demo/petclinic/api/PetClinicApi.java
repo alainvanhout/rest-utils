@@ -4,7 +4,7 @@ import alainvanhout.demo.petclinic.api.pets.PetsEndpoint;
 import alainvanhout.endpoint.api.BasicApi;
 import alainvanhout.endpoint.api.CallHandler;
 import alainvanhout.endpoint.api.Settings;
-import alainvanhout.http.HttpDefaults;
+import alainvanhout.json.JsonDefaults;
 import alainvanhout.http.apachecommons.HttpUtility;
 import alainvanhout.http.dtos.Response;
 import alainvanhout.json.gson.JsonUtility;
@@ -30,7 +30,7 @@ public class PetClinicApi extends BasicApi<PetClinicApi> {
     public PetClinicApi(final String rootUrl) {
         super(rootUrl, new Settings().httpExecutor(HttpUtility.DEFAULT));
         // this ensures that a default JsonConverter is known globally, so it need not be set on every Request or Response
-        HttpDefaults.setDefaultJsonConverter(JsonUtility.DEFAULT);
+        JsonDefaults.setDefaultJsonConverter(JsonUtility.DEFAULT);
     }
 
     @Override

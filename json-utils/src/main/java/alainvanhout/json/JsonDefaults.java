@@ -1,13 +1,9 @@
-package alainvanhout.http;
-
-import alainvanhout.http.client.HttpExecutor;
-import alainvanhout.json.JsonConverter;
+package alainvanhout.json;
 
 /**
- * Provides a location where a default implementation of {@link JsonConverter} can be registered, to be used by
- * implementations of {@link HttpExecutor}.
+ * Provides a location where a default implementation of {@link JsonConverter} can be registered.
  */
-public class HttpDefaults {
+public class JsonDefaults {
     private static JsonConverter defaultJsonConverter = null;
 
     public static void setDefaultJsonConverter(final JsonConverter jsonConverter) {

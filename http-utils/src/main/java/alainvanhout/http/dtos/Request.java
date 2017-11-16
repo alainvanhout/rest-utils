@@ -1,6 +1,6 @@
 package alainvanhout.http.dtos;
 
-import alainvanhout.http.HttpDefaults;
+import alainvanhout.json.JsonDefaults;
 import alainvanhout.http.common.Headers;
 import alainvanhout.http.common.HttpMethod;
 import alainvanhout.http.parameters.Parameters;
@@ -90,7 +90,7 @@ public class Request {
         if (Objects.nonNull(jsonConverter)) {
             return jsonConverter;
         }
-        final JsonConverter defaultJsonConverter = HttpDefaults.getDefaultJsonConverter();
+        final JsonConverter defaultJsonConverter = JsonDefaults.getDefaultJsonConverter();
         if (Objects.nonNull(defaultJsonConverter)) {
             return defaultJsonConverter;
         }

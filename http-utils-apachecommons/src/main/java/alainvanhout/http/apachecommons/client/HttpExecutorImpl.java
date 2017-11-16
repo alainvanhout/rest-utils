@@ -1,6 +1,6 @@
 package alainvanhout.http.apachecommons.client;
 
-import alainvanhout.http.HttpDefaults;
+import alainvanhout.json.JsonDefaults;
 import alainvanhout.http.HttpException;
 import alainvanhout.http.client.HttpExecutor;
 import alainvanhout.http.client.HttpExecutorBuilder;
@@ -94,7 +94,7 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
             response.jsonConverter(this.jsonConverter);
         } else {
             // note that the default may yet be null
-            response.jsonConverter(HttpDefaults.getDefaultJsonConverter());
+            response.jsonConverter(JsonDefaults.getDefaultJsonConverter());
         }
     }
 

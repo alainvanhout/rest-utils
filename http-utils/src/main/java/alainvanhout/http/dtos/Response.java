@@ -1,6 +1,6 @@
 package alainvanhout.http.dtos;
 
-import alainvanhout.http.HttpDefaults;
+import alainvanhout.json.JsonDefaults;
 import alainvanhout.http.common.StatusCodeRange;
 import alainvanhout.http.parameters.Parameters;
 import alainvanhout.json.JsonConverter;
@@ -86,7 +86,7 @@ public class Response {
         if (Objects.nonNull(jsonConverter)) {
             return jsonConverter;
         }
-        final JsonConverter defaultJsonConverter = HttpDefaults.getDefaultJsonConverter();
+        final JsonConverter defaultJsonConverter = JsonDefaults.getDefaultJsonConverter();
         if (Objects.nonNull(defaultJsonConverter)) {
             return defaultJsonConverter;
         }
