@@ -2,6 +2,7 @@ package alainvanhout.endpoint.api;
 
 import alainvanhout.http.dtos.Response;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -27,7 +28,7 @@ public abstract class BasicApi<T extends CallHandler> extends CallHandler<T> {
     /**
      * The action to be taken when a http call was made that resulted in a 200-series status code response.
      * This action is only used as a fallback, in case neither the given endpoint, nor any of its parents,
-     * has had {@link CallHandler::onSuccess} set
+     * has had {@link CallHandler#onSuccess(BiConsumer)} set
      *
      * @return A consumer of {@link Response}
      */
@@ -38,13 +39,12 @@ public abstract class BasicApi<T extends CallHandler> extends CallHandler<T> {
     /**
      * The action to be taken when a http call was made that resulted in a non-200-series status code response.
      * This action is only used as a fallback, in case neither the given endpoint, nor any of its parents,
-     * has had {@link CallHandler::onError} set
+     * has had {@link CallHandler#onError(BiConsumer)} set
      *
      * @return A consumer of {@link Response}
      */
     protected Consumer<Response> defaultOnError() {
-        return response -> {
-        };
+        return response -> {};
     }
 
     /**

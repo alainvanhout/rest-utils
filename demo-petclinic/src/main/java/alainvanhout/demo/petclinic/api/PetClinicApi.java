@@ -2,6 +2,7 @@ package alainvanhout.demo.petclinic.api;
 
 import alainvanhout.demo.petclinic.api.pets.PetsEndpoint;
 import alainvanhout.endpoint.api.BasicApi;
+import alainvanhout.endpoint.api.CallHandler;
 import alainvanhout.endpoint.api.Settings;
 import alainvanhout.http.HttpDefaults;
 import alainvanhout.http.apachecommons.HttpUtility;
@@ -17,7 +18,7 @@ public class PetClinicApi extends BasicApi<PetClinicApi> {
 
     /**
      * To avoid each and every {@link alainvanhout.endpoint.api.Endpoint} implementation requiring an identical
-     * constructor, the {@link alainvanhout.endpoint.api.Endpoint::init} serves the same purpose.
+     * constructor, the {@link alainvanhout.endpoint.api.Endpoint#init(String, CallHandler)} serves the same purpose.
      */
     public PetsEndpoint pets = new PetsEndpoint().init("pets", this);
 

@@ -18,14 +18,14 @@ public class JsonConverterImpl implements JsonConverter, JsonConverterBuilder {
     private boolean configFormatted = false;
 
     /**
-     * Use {JsonConverterImpl::with} to create new {@link JsonConverterBuilder} instances
+     * Use {@link JsonConverterImpl#with()} to create new {@link JsonConverterBuilder} instances
      */
     private JsonConverterImpl(){
     }
 
     /**
      * Produces a new {@link JsonConverterBuilder} instance, to which configuration can be applied,
-     * before calling {@link JsonConverterBuilder::init} to create a {@link JsonConverter} instance
+     * before calling {@link JsonConverterBuilder#init()} to create a {@link JsonConverter} instance
      * @return A new {@link JsonConverterBuilder} instance
      */
     public static JsonConverterBuilder with(){

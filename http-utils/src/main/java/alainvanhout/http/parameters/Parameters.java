@@ -6,7 +6,7 @@ import java.util.*;
  * A wrapper for e.g. url query parameter or http header information, with various convenience methods.
  * <p>
  * The internal state is based on a {@link LinkedHashMap}, to ensure that the internal order consistently reflects the
- * order of addition, to e.g. facilitate testing. {@link Parameters::equals} and {@link Parameters::hashCode} are
+ * order of addition, to e.g. facilitate testing. {@link Parameters#equals(Object)} and {@link Parameters#hashCode()} are
  * however based on {@link HashMap}, since order is not inherently relevant.
  */
 public class Parameters {
