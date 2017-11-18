@@ -5,6 +5,7 @@ import alainvanhout.http.dtos.Request;
 import alainvanhout.http.dtos.Response;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Objects;
 
 import static alainvanhout.http.common.StatusCodeRange._200;
@@ -89,7 +90,7 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
             return this.getClass().getDeclaredField("errorType").getGenericType();
         } catch (NoSuchFieldException e) {
             // disregard, since the listType might not be needed, or is to be retrieved from the parent
-            return null;
+            return HashMap.class;
         }
     }
 
