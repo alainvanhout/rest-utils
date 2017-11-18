@@ -2,6 +2,7 @@ package alainvanhout.endpoint.api;
 
 import alainvanhout.http.dtos.Response;
 
+import java.lang.reflect.Type;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -45,6 +46,17 @@ public abstract class BasicApi<T extends CallHandler> extends CallHandler<T> {
      */
     protected Consumer<Response> defaultOnError() {
         return response -> {};
+    }
+
+    /**
+     * The default type (e.g. class) to be used to deserialize the response body of a response with a
+     * non-200-range http status code, if neither the endpoint in question nor any of its parents provides
+     * an errorType to use.
+     *
+     * @return A type
+     */
+    protected Type defaultErrorType() {
+        return null;
     }
 
     /**

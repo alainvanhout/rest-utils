@@ -90,7 +90,7 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
             return this.getClass().getDeclaredField("errorType").getGenericType();
         } catch (NoSuchFieldException e) {
             // disregard, since the listType might not be needed, or is to be retrieved from the parent
-            return HashMap.class;
+            return null;
         }
     }
 
@@ -160,15 +160,32 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
     }
 
     private Object deserializeError(final Response response) {
-        if (Objects.isNull(errorType)) {
-            throw new EndpointException("No field 'errorType' found on class " + getClass().getCanonicalName());
-        }
+        final Type actualErrorType = getErrorType();
 
         try {
             final String body = response.getBody();
-            return response.getJsonConverter().toObject(body, errorType);
+            return response.getJsonConverter().toObject(body, Objects.nonNull(actualErrorType) ? actualErrorType : HashMap.class);
         } catch (Exception e) {
             throw new EndpointException("Failed to deserialize error response body", e);
         }
+    }
+
+    Type getErrorType() {
+        if (Objects.nonNull(errorType)) {
+            return errorType;
+        }
+        if (this.parent instanceof Endpoint) {
+            final Type parentErrorType = ((Endpoint) parent).getErrorType();
+            if (Objects.nonNull(parentErrorType)) {
+                return parentErrorType;
+            }
+        }
+        if (this.parent instanceof BasicApi) {
+            final Type parentErrorType = ((BasicApi) parent).defaultErrorType();
+            if (Objects.nonNull(parentErrorType)) {
+                return parentErrorType;
+            }
+        }
+        return null;
     }
 }

@@ -13,10 +13,10 @@ import java.util.function.Consumer;
  */
 public class CallHandler<T extends CallHandler> {
 
+    protected CallHandler parent;
     protected String url;
-    private Settings settings;
 
-    private CallHandler parent;
+    private Settings settings;
 
     private BiConsumer<Response, Object> onError;
     private BiConsumer<Response, Object> onSuccess;
