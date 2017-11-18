@@ -1,6 +1,5 @@
 package alainvanhout.http.apachecommons.client;
 
-import alainvanhout.json.JsonDefaults;
 import alainvanhout.http.HttpException;
 import alainvanhout.http.client.HttpExecutor;
 import alainvanhout.http.client.HttpExecutorBuilder;
@@ -9,6 +8,7 @@ import alainvanhout.http.dtos.Response;
 import alainvanhout.http.parameters.Parameters;
 import alainvanhout.http.parameters.ParametersUtility;
 import alainvanhout.json.JsonConverter;
+import alainvanhout.json.JsonDefaults;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,10 +17,12 @@ import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +68,7 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
         apacheRequest.setMethod(request.getMethod());
         apacheRequest.setURI(URI.create(url));
         applyHeaders(apacheRequest, request);
+        applyBody(apacheRequest, request);
 
         try {
             final long startTime = System.currentTimeMillis();
@@ -81,6 +84,16 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
 
         } catch (Exception e) {
             throw new HttpException("Encountered error while executing request: " + request, e);
+        }
+    }
+
+    private void applyBody(ApacheRequestBase apacheRequest, Request request) {
+        if (Objects.nonNull(request.getBody())) {
+            try {
+                apacheRequest.setEntity(new StringEntity(request.getBody()));
+            } catch (UnsupportedEncodingException e) {
+                throw new HttpException("Unable to attach body to request: " + request, e);
+            }
         }
     }
 
