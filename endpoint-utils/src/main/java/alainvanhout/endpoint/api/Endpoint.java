@@ -100,8 +100,16 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
      * @return A {@link Request} with minimal endpoint information already applied
      */
     protected Request createRequest() {
-        return new Request()
+        final Request request = new Request()
                 .url(getUrl());
+
+        final Settings actualSettings = getSettings();
+        final String username = actualSettings.getUsername();
+        if (Objects.nonNull(username)) {
+            request.basicAuthentication(username, actualSettings.getPassword());
+        }
+
+        return request;
     }
 
     protected U performInstanceCall(final Request request) {
