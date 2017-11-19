@@ -3,6 +3,7 @@ package alainvanhout.endpoint.api;
 import alainvanhout.http.client.HttpExecutor;
 import alainvanhout.http.dtos.Request;
 import alainvanhout.http.dtos.Response;
+import alainvanhout.json.JsonConverter;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -104,7 +105,13 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
                 .url(getUrl());
 
         final Settings actualSettings = getSettings();
+        final JsonConverter jsonConverter = actualSettings.getJsonConverter();
         final String username = actualSettings.getUsername();
+
+        if (Objects.nonNull(jsonConverter)){
+            request.jsonConverter(jsonConverter);
+        }
+
         if (Objects.nonNull(username)) {
             request.basicAuthentication(username, actualSettings.getPassword());
         }
@@ -112,14 +119,18 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
         return request;
     }
 
+    protected U performInstanceCall(final Request request, final Class<U> type) {
+        final HttpExecutor httpExecutor = getSettings().getHttpExecutor();
+        final Response response = httpExecutor.execute(request);
+        return handleResponse(response, type);
+    }
+
     protected U performInstanceCall(final Request request) {
         if (Objects.isNull(instanceType)) {
             throw new EndpointException("No field 'instanceType' found on class " + getClass().getCanonicalName());
         }
 
-        final HttpExecutor httpExecutor = getSettings().getHttpExecutor();
-        final Response response = httpExecutor.execute(request);
-        return handleResponse(response, instanceType);
+        return performInstanceCall(request, instanceType);
     }
 
     protected V performListCall(final Request request) {
@@ -127,9 +138,13 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
             throw new EndpointException("No field 'listType' found on class " + getClass().getCanonicalName());
         }
 
+        return performListCall(request, listType);
+    }
+
+    protected V performListCall(final Request request, final Type type) {
         final HttpExecutor httpExecutor = getSettings().getHttpExecutor();
         final Response response = httpExecutor.execute(request);
-        return handleResponse(response, listType);
+        return handleResponse(response, type);
     }
 
     protected void performVoidCall(final Request request) {
@@ -143,16 +158,15 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
     }
 
     private <R> R handleResponse(final Response response, final Object type) {
-        final R result = deserializeResult(response, type);
-
         if (response.inRange(_200)) {
+            final R result = deserializeResult(response, type);
             this.getOnSuccess().accept(response, result);
+            return result;
         } else {
             final Object error = deserializeError(response);
             this.getOnError().accept(response, error);
+            return null;
         }
-
-        return result;
     }
 
     private <R> R deserializeResult(final Response response, final Object type) {
@@ -174,7 +188,7 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
             final String body = response.getBody();
             return response.getJsonConverter().toObject(body, Objects.nonNull(actualErrorType) ? actualErrorType : HashMap.class);
         } catch (Exception e) {
-            throw new EndpointException("Failed to deserialize error response body", e);
+           return null;
         }
     }
 

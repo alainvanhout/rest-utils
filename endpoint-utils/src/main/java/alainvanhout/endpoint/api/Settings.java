@@ -1,6 +1,7 @@
 package alainvanhout.endpoint.api;
 
 import alainvanhout.http.client.HttpExecutor;
+import alainvanhout.json.JsonConverter;
 
 /**
  * Wrapper for all information that is relevant across the API, rather than a specific endpoint.
@@ -11,6 +12,11 @@ public class Settings {
      * The {@link HttpExecutor} to be used to perform http calls.
      */
     private HttpExecutor httpExecutor;
+    /**
+     * The {@link JsonConverter} to be used to convert to and from JSON. If not provided, the default JsonConverter
+     * will be used, if set.
+     */
+    private JsonConverter jsonConverter;
     /**
      * Username used for basic authentication.
      */
@@ -45,5 +51,14 @@ public class Settings {
 
     public String getPassword() {
         return password;
+    }
+
+    public Settings jsonConverter(final JsonConverter jsonConverter) {
+        this.jsonConverter = jsonConverter;
+        return this;
+    }
+
+    public JsonConverter getJsonConverter() {
+        return jsonConverter;
     }
 }
