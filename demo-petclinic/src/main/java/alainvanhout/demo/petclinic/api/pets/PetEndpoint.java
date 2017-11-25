@@ -4,19 +4,15 @@ import alainvanhout.endpoint.api.Endpoint;
 import alainvanhout.http.common.HttpMethod;
 import alainvanhout.http.dtos.Request;
 
-import java.util.HashMap;
-import java.util.List;
-
 /**
  * The /pets/{id} endpoint
  */
-public class PetEndpoint extends Endpoint<PetEndpoint, Pet, List<Pet>> {
+public class PetEndpoint extends Endpoint<PetEndpoint, Pet> {
 
     /**
      * Via naming convention and reflection, these fields allow for out-of-the-box JSON conversion where needed.
      */
     private Pet instanceType;
-    private HashMap<String, String> errorType;
 
     /**
      * Method to perform a GET /pets/{id} call

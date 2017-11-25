@@ -28,9 +28,16 @@ public class PetClinicApi extends BasicApi<PetClinicApi> {
      * @param rootUrl The root URL, to be passed on to {@link BasicApi}
      */
     public PetClinicApi(final String rootUrl) {
-        super(rootUrl, new Settings().httpExecutor(HttpUtility.DEFAULT));
+        super(rootUrl, createSettings());
         // this ensures that a default JsonConverter is known globally, so it need not be set on every Request or Response
         JsonDefaults.setDefaultJsonConverter(JsonUtility.DEFAULT);
+    }
+
+    private static Settings createSettings() {
+        return new Settings()
+                .httpExecutor(HttpUtility.DEFAULT)
+                .username("foo")
+                .password("bar");
     }
 
     @Override

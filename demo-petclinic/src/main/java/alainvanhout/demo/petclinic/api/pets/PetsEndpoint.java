@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * The /pets endpoint
  */
-public class PetsEndpoint extends Endpoint<PetsEndpoint, Pet, List<Pet>> {
+public class PetsEndpoint extends Endpoint<PetsEndpoint, Pet> {
 
     /**
      * Via naming convention and reflection, these fields allow for out-of-the-box JSON conversion where needed.

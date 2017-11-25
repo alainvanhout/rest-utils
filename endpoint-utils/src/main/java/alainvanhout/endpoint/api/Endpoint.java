@@ -7,6 +7,7 @@ import alainvanhout.json.JsonConverter;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 import static alainvanhout.http.common.StatusCodeRange._200;
@@ -27,9 +28,8 @@ import static alainvanhout.http.common.StatusCodeRange._200;
  *
  * @param <T> A reference to the concrete class itself, to allow for chaining method call
  * @param <U> A generics reference to the instance type, e.g. MyApiResponseDto
- * @param <V> A generics reference to the list type, e.g. List&lt;MyApiResponseDto&gt;
  */
-public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
+public class Endpoint<T extends Endpoint, U> extends CallHandler<T> {
 
     /**
      * A concrete reference to the {@link Class} that serves as the dto for this resource.
@@ -133,7 +133,7 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
         return performInstanceCall(request, instanceType);
     }
 
-    protected V performListCall(final Request request) {
+    protected List<U> performListCall(final Request request) {
         if (Objects.isNull(listType)) {
             throw new EndpointException("No field 'listType' found on class " + getClass().getCanonicalName());
         }
@@ -141,7 +141,7 @@ public class Endpoint<T extends Endpoint, U, V> extends CallHandler<T> {
         return performListCall(request, listType);
     }
 
-    protected V performListCall(final Request request, final Type type) {
+    protected List<U> performListCall(final Request request, final Type type) {
         final HttpExecutor httpExecutor = getSettings().getHttpExecutor();
         final Response response = httpExecutor.execute(request);
         return handleResponse(response, type);
