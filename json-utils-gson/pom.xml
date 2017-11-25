@@ -8,6 +8,14 @@
     <artifactId>json-utils-gson</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
+    <licenses>
+        <license>
+            <name>3-Clause BSD License</name>
+            <url>https://opensource.org/licenses/BSD-3-Clause</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
