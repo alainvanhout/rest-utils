@@ -8,6 +8,10 @@
     <artifactId>demo-petclinic</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -24,12 +28,12 @@
             <artifactId>json-utils-gson</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>rest-utils</groupId>
+            <artifactId>endpoint-utils</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
-
-
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
 
     <build>
         <plugins>
