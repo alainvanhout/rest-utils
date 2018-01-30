@@ -15,6 +15,11 @@ public class JsonUtility {
      */
     public static final JsonConverter DEFAULT = JsonConverterImpl.with().init();
 
+    /**
+     * A {@link JsonConverter} instance that produced formatted (i.e. multi-line) JSON.
+     */
+    public static final JsonConverter FORMATTED = JsonConverterImpl.with().formatted().init();
+
     public static String toJson(final Object object) {
         return DEFAULT.toJson(object);
     }
