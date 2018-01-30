@@ -7,6 +7,7 @@ import alainvanhout.json.JsonConverter;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -80,6 +81,15 @@ public class Response {
     public <T> List<T> getBodyFromJson(Type type) {
         final JsonConverter converter = actualJsonConverter();
         return converter.toList(body, type);
+    }
+
+    /**
+     * Convenience method to retrieve the information in the JSON-based response body as {@link Map}
+     * @return The Map that is produced
+     */
+    public Map<String, Object> getBodyAsMap() {
+        final JsonConverter converter = actualJsonConverter();
+        return converter.toMap(body);
     }
 
     private JsonConverter actualJsonConverter() {
