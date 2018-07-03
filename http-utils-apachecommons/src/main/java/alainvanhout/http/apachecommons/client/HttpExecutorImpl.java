@@ -145,9 +145,7 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
     private Parameters extractHeaders(CloseableHttpResponse apacheResponse) {
         Parameters headers = new Parameters();
         for (Header header : apacheResponse.getAllHeaders()) {
-            for (HeaderElement headerElement : header.getElements()) {
-                headers.add(header.getName(), headerElement.getName());
-            }
+            headers.add(header.getName(), header.getValue());
         }
         return headers;
     }
