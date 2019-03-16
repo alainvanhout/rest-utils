@@ -148,10 +148,6 @@ public class Endpoint<T extends Endpoint, U> extends CallHandler<T> {
     }
 
     protected void performVoidCall(final Request request) {
-        if (Objects.isNull(instanceType)) {
-            throw new EndpointException("No field 'listType' found on class " + getClass().getCanonicalName());
-        }
-
         final HttpExecutor httpExecutor = getSettings().getHttpExecutor();
         final Response response = httpExecutor.execute(request);
         handleResponse(response, Void.class);
