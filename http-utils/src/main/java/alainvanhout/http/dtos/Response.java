@@ -31,6 +31,10 @@ public class Response {
      */
     private Parameters headers = new Parameters();
     /**
+     * Whether the http call timed out
+     */
+    private boolean timedOut;
+    /**
      * The {@link JsonConverter} to be used. It needs not be set if no JSON-related functionality is used.
      */
     private JsonConverter jsonConverter;
@@ -112,8 +116,9 @@ public class Response {
         return duration;
     }
 
-    public void setDuration(long duration) {
+    public Response duration(long duration) {
         this.duration = duration;
+        return this;
     }
 
     public Parameters getHeaders() {
@@ -146,6 +151,15 @@ public class Response {
         return this;
     }
 
+    public boolean isTimedOut() {
+        return this.timedOut;
+    }
+
+    public Response timedOut(final boolean timedOut) {
+        this.timedOut = timedOut;
+        return this;
+    }
+
     /**
      * Returns a string of the form '201 (36 ms)' in the case of an http call that returned with a 201 status code
      * within 36 milliseconds, for e.g. convenient logging.
@@ -154,7 +168,9 @@ public class Response {
      */
     @Override
     public String toString() {
+        if (timedOut) {
+            return String.format("Timed out [%s ms]", duration);
+        }
         return String.format("%s [%s ms]", statusCode, duration);
     }
-
 }

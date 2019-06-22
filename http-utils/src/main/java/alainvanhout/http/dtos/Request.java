@@ -41,6 +41,10 @@ public class Request {
      * The {@link JsonConverter} to be used. It needs not be set if no JSON-related functionality is used.
      */
     private JsonConverter jsonConverter;
+    /**
+     * A timeout value that overrides that of the HttpExecutor, when set
+     */
+    private int timeout;
 
     public String getUrl() {
         return url;
@@ -168,5 +172,14 @@ public class Request {
     @Override
     public String toString() {
         return String.format("%s %s", method, url);
+    }
+
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    public Request timeout(final Integer timeout) {
+        this.timeout = timeout;
+        return this;
     }
 }

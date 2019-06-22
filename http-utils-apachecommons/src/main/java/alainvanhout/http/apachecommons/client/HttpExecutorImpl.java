@@ -12,17 +12,18 @@ import alainvanhout.json.JsonDefaults;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,9 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
     private CloseableHttpClient apacheClient;
 
     private JsonConverter jsonConverter = null;
+
+    private Integer timeout = 60_000;
+    private int maxConnections = 100;
 
     private HttpExecutorImpl() {
     }
@@ -49,9 +53,34 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
     }
 
     @Override
-    public HttpExecutor init() {
-        apacheClient = HttpClientBuilder.create().build();
+    public HttpExecutorImpl timeout(final Integer timeout) {
+        this.timeout = timeout;
         return this;
+    }
+
+    @Override
+    public HttpExecutorImpl maxConnections(final int maxConnections) {
+        this.maxConnections = maxConnections;
+        return this;
+    }
+
+    @Override
+    public HttpExecutor init() {
+        PoolingHttpClientConnectionManager connectionManager = buildConnectionManager();
+
+        apacheClient = HttpClientBuilder
+            .create()
+            .setConnectionManager(connectionManager)
+            .build();
+
+        return this;
+    }
+
+    private PoolingHttpClientConnectionManager buildConnectionManager() {
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        connectionManager.setMaxTotal(maxConnections);
+        connectionManager.setDefaultMaxPerRoute(maxConnections);
+        return connectionManager;
     }
 
     @Override
@@ -64,27 +93,47 @@ public class HttpExecutorImpl implements HttpExecutor, HttpExecutorBuilder {
 
         final Parameters urlParameters = buildFinalParameters(queryString, request.getParameters());
         final String url = minimalUrl + buildParameters(urlParameters);
+        final RequestConfig requestConfig = buildRequestConfig(request);
 
+        apacheRequest.setConfig(requestConfig);
         apacheRequest.setMethod(request.getMethod());
         apacheRequest.setURI(URI.create(url));
         applyHeaders(apacheRequest, request);
         applyBody(apacheRequest, request);
 
+        final long startTime = System.currentTimeMillis();
         try {
-            final long startTime = System.currentTimeMillis();
-            final CloseableHttpResponse apacheResponse = apacheClient.execute(apacheRequest);
+            try (final CloseableHttpResponse apacheResponse = apacheClient.execute(apacheRequest)) {
+                final long endTime = System.currentTimeMillis();
+
+                Response response = convertToResponse(apacheResponse);
+                response.duration(endTime - startTime);
+
+                assignJsonConverterToResponse(request, response);
+
+                return response;
+            }
+        } catch (ConnectTimeoutException | SocketTimeoutException  e) {
             final long endTime = System.currentTimeMillis();
-
-            Response response = convertToResponse(apacheResponse);
-            response.setDuration(endTime - startTime);
-
-            assignJsonConverterToResponse(request, response);
-
-            return response;
-
+            return new Response()
+                .timedOut(true)
+                .duration(endTime - startTime)
+                .statusCode(0);
         } catch (Exception e) {
             throw new HttpException("Encountered error while executing request: " + request, e);
         }
+    }
+
+    private RequestConfig buildRequestConfig(Request request) {
+        Integer concreteTimeout = request.getTimeout() != null ? request.getTimeout() : this.timeout;
+        RequestConfig.Builder configBuilder = RequestConfig.custom();
+        if (concreteTimeout != null) {
+            configBuilder
+                .setConnectionRequestTimeout(concreteTimeout)
+                .setConnectTimeout(concreteTimeout)
+                .setSocketTimeout(concreteTimeout);
+        }
+        return configBuilder.build();
     }
 
     private void applyBody(ApacheRequestBase apacheRequest, Request request) {

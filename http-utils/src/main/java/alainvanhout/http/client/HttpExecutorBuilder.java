@@ -23,4 +23,20 @@ public interface HttpExecutorBuilder {
      * @return The builder itself
      */
     HttpExecutorBuilder jsonConverter(JsonConverter jsonConverter);
+
+    /**
+     * Allows declaring a timeout value.
+     *
+     * @param timeout A number of milliseconds
+     * @return The builder itself
+     */
+    HttpExecutorBuilder timeout(final Integer timeout);
+
+    /**
+     * Allows declaring the connection pool maximum size.
+     *
+     * @param maxConnections An integer number
+     * @return The builder itself
+     */
+    HttpExecutorBuilder maxConnections(final int maxConnections);
 }
